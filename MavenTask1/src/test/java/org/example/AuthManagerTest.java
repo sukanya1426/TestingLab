@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 class AuthManagerTest {
 
     @Mock
@@ -41,11 +40,12 @@ class AuthManagerTest {
         incorrectPassword = "wrongPassword123";
         nonExistentEmail = "nonexistent@example.com";
 
-        validUser = new User(validEmail, "hashedPassword123");
+//        validUser = new User(validEmail, "hashedPassword123");
 
-        when(user.getHashedPassword()).thenReturn("hashedPassword123");
+        when(user.getHashedPassword()).thenReturn(validPassword);
         when(userRepository.findByEmail(validEmail)).thenReturn(user);
-        when(passwordHasher.matches(validPassword, "hashedPassword123")).thenReturn(true);
+        when(userRepository.findByEmail(nonExistentEmail)).thenReturn(null);
+        when(passwordHasher.matches(validPassword, validPassword)).thenReturn(true);
 //        when(passwordHasher.matches(validPassword, user.getHashedPassword())).thenReturn(true);
 //        when(passwordHasher.matches(incorrectPassword, user.getHashedPassword())).thenReturn(false);
 //        when(userRepository.findByEmail(nonExistentEmail)).thenReturn(null);
@@ -53,10 +53,8 @@ class AuthManagerTest {
 
     @Test
     public void testLogin_ValidCredentials() {
-
         User result = authManager.login(validEmail, validPassword);
         assertEquals(result, user);
-//        assertEquals(validUser, result, "Login should succeed with valid credentials");
     }
 
     @Test
